@@ -1,0 +1,20 @@
+# C / build
+build/
+bin/
+obj/
+*.o
+*.a
+*.so
+*.dll
+*.exe
+a.out
+*.out
+*.log
+core
+*.dSYM/
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+tags
