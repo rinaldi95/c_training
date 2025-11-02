@@ -1,52 +1,36 @@
 #include<stdio.h>
 #include<unistd.h>
-
 int main(void){
-    int rows = 15;
-    int cols = 21;
-    int zi[rows*cols];
-    int zf[rows*cols];
-    int n_max=1000;
-    for (int i = 0; i<rows; i++){
-        for (int j = 0; j<cols; j++){
-            zf[i*cols+j]=0;
-        }
-    }
-
-        
-    for (int i =5 ; i<rows-5; i++){
-        for (int j = 8; j<cols-3; j++){
-            zf[i*cols+j]=1;
-        }
-    }
-    
-  
-    for (int n=0; n<n_max; n++){
-        
-        printf("\033[2J\033[H");
-        fflush(stdout);  // assicura che la sequenza parta subito
-        
-        for (int i = 0; i<rows; i++){
-            for (int j = 0; j<cols; j++){
-                if (zf[i*cols+j]==1) printf("##");
-                else printf("..");
-            }
-            printf("\n");
-        }
-        for (int i = 0; i<rows; i++){
-            for (int j = 0; j<cols; j++){
-                zi[i*cols+j]=zf[i*cols+j];
-            }
-        }
-        for (int i = 0; i<rows; i++){
-            for (int j = 0; j<cols; j++){
-                zf[i*cols+j]=zi[((i-1+rows)%rows*cols)+(j-1+cols)%cols]+zi[((i+rows)%rows*cols)+(j-1+cols)%cols]+zi[((i+1+rows)%rows*cols)+(j-1+cols)%cols]+zi[((i-1+rows)%rows*cols)+(j+cols)%cols]+zi[((i+1+rows)%rows*cols)+(j+cols)%cols]+zi[((i-1+rows)%rows*cols)+(j+1+cols)%cols]+zi[((i+rows)%rows*cols)+(j+1+cols)%cols]+zi[((i+1+rows)%rows*cols)+(j+cols+1)%cols];
-                if (zi[i*cols+j]==1) zf[i*cols+j]= (zf[i*cols+j]==2 || zf[i*cols+j]==3);
-                else zf[i*cols+j]= (zf[i*cols+j]==3);
-                }
-            }
-        usleep(1000000);
-        }
-        
-    return(0);
+	int col=35;
+	int row=30;
+	int nmax=1000;
+	int mi[col*row];
+	int mf[col*row];
+	int *tp;
+	int *pmi=mi;
+	int *pmf=mf;
+	int di[8]={row-1,row-1,row-1,0,0,1,1,1};
+	int dj[8]={col-1,0,1,col-1,1,col-1,0,1};
+	for (int i=0;i<row*col;i++) mf[i]=0;
+	for (int i=0;i<row*col-566;i++) mf[i]=1;
+	for (int n=0;n<nmax;n++){
+		tp=pmi;
+		pmi=pmf;
+		pmf=tp;
+		printf("\033[2J\033[H");
+		for (int i=0;i<row;i++){
+			for(int j=0;j<col;j++){
+				pmf[i*col+j]=0;
+				for (int k=0;k<8;k++){
+					pmf[i*col+j]+=pmi[(i+di[k])%row*col+(j+dj[k])%col];
+					}
+				printf("%s",(pmi[i*col+j]==0)? ".." : "##");
+				if (pmi[i*col+j]==0) pmf[i*col+j]=(pmf[i*col+j]==3);
+				else pmf[i*col+j]=(pmf[i*col+j]==2 || pmf[i*col+j]==3);
+			}
+			printf("\n");
+		}
+	usleep(200000);
+	}
+	return 0;
 }
